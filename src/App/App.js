@@ -7,7 +7,9 @@ import NoteListMain from '../NoteListMain/NoteListMain'
 import NotePageMain from '../NotePageMain/NotePageMain'
 import AddFolder from '../AddFolder/AddFolder'
 import AddNote from '../AddNote/AddNote'
-import dummyStore from '../dummy-store'
+// import NotesContext from '../NotesContext'
+// import FoldersContext from '../FoldersContext'
+import NotesFoldersContext from '../NotesFoldersContext'
 import { getNotesForFolder, findNote, findFolder } from '../notes-helpers'
 import './App.css'
 
@@ -16,11 +18,10 @@ class App extends Component {
     notes: [],
     folders: [],
   };
-  setStuffs= (notes, folders) => {
+  setStuffs = (notes, folders) => {
     this.setState({
       notes,
       folders,
-      //item: results,
       error: null,
     })
   }
@@ -29,20 +30,20 @@ class App extends Component {
     // fake date loading from API call
     //setTimeout(() => this.setState(dummyStore), 600)
 
-    let thiccURLs = ['folders' , 'notes']
+    let thiccURLs = ['folders', 'notes']
     const formattedResults = []
     Promise.all(thiccURLs.map(item =>
       fetch(`http://localhost:9090/${item}`)
-      .then(checkResults)
-      .then(response => response.json())
-      .catch(error => {throw new Error(error.message)})
+        .then(checkResults)
+        .then(response => response.json())
+        .catch(error => { throw new Error(error.message) })
 
-      .then(results => {
+        .then(results => {
           formattedResults.push(results)
           console.log(formattedResults)
           this.setStuffs(
             formattedResults[1], formattedResults[0]
-          ) 
+          )
         })
     ))
     function checkResults(response) {
@@ -52,8 +53,6 @@ class App extends Component {
       throw new Error(response.statusText);
     }
   }
-  //res => {(res.ok) ? Promise.resolve(res) : new Error(res.statusText);}
-
 
   renderNavRoutes() {
     const { notes, folders } = this.state
@@ -153,22 +152,28 @@ class App extends Component {
   }
 
   render() {
+    const contextValue = {
+      notes: this.state.notes,
+      folders: this.state.folders,
+    }
     return (
-      <div className='App'>
-        <nav className='App__nav'>
-          {this.renderNavRoutes()}
-        </nav>
-        <header className='App__header'>
-          <h1>
-            <Link to='/'>Noteful</Link>
-            {' '}
-            <FontAwesomeIcon icon='check-double' />
-          </h1>
-        </header>
-        <main className='App__main'>
-          {this.renderMainRoutes()}
-        </main>
-      </div>
+      <NotesFoldersContext.Provider value={contextValue}>
+        <div className='App'>
+          <nav className='App__nav'>
+            {this.renderNavRoutes()}
+          </nav>
+          <header className='App__header'>
+            <h1>
+              <Link to='/'>Noteful</Link>
+              {' '}
+              <FontAwesomeIcon icon='check-double' />
+            </h1>
+          </header>
+          <main className='App__main'>
+            {this.renderMainRoutes()}
+          </main>
+        </div>
+      </NotesFoldersContext.Provider>
     )
   }
 }
