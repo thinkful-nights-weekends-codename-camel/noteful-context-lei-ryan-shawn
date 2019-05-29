@@ -16,31 +16,44 @@ class App extends Component {
     notes: [],
     folders: [],
   };
+  setStuffs= (notes, folders) => {
+    this.setState({
+      notes,
+      folders,
+      //item: results,
+      error: null,
+    })
+  }
 
   componentDidMount() {
     // fake date loading from API call
-    setTimeout(() => this.setState(dummyStore), 600)
+    //setTimeout(() => this.setState(dummyStore), 600)
 
-    let notesURL = 'http://localhost:9090/notes'
-    let foldersURL = 'http://localhost:9090/folders'
+    let thiccURLs = ['folders' , 'notes']
+    const formattedResults = []
+    Promise.all(thiccURLs.map(item =>
+      fetch(`http://localhost:9090/${item}`)
+      .then(checkResults)
+      .then(response => response.json())
+      .catch(error => {throw new Error(error.message)})
 
-    fetch(notesURL)
-    .then(function(response) {
-      return response.json();
-    })
-    .then(function(myJson) {
-      console.log(JSON.stringify(myJson));
-    })
-    .then(function() {
-      fetch(foldersURL)
-      .then(function(response) {
-          return response.json();
-      })
-      .then(function(myJson) {
-          console.log(myJson)
-      })
-    });
+      .then(results => {
+          formattedResults.push(results)
+          console.log(formattedResults)
+          this.setStuffs(
+            formattedResults[1], formattedResults[0]
+          ) 
+        })
+    ))
+    function checkResults(response) {
+      if (response.ok) {
+        return Promise.resolve(response);
+      }
+      throw new Error(response.statusText);
+    }
   }
+  //res => {(res.ok) ? Promise.resolve(res) : new Error(res.statusText);}
+
 
   renderNavRoutes() {
     const { notes, folders } = this.state
