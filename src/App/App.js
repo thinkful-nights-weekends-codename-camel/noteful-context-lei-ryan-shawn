@@ -7,10 +7,7 @@ import NoteListMain from '../NoteListMain/NoteListMain'
 import NotePageMain from '../NotePageMain/NotePageMain'
 import AddFolder from '../AddFolder/AddFolder'
 import AddNote from '../AddNote/AddNote'
-// import NotesContext from '../NotesContext'
-// import FoldersContext from '../FoldersContext'
 import NotesFoldersContext from '../NotesFoldersContext'
-import { getNotesForFolder, findNote, findFolder } from '../notes-helpers'
 import './App.css'
 
 class App extends Component {
@@ -18,15 +15,15 @@ class App extends Component {
     notes: [],
     folders: [],
   };
-  setStuffs1 = (notes, folders) => {
-    this.setState({
-      notes,
-      folders,
-      error: null,
-    })
-    console.log('setting state');
-    console.log(this.state);
-  }
+  // setStuffs1 = (notes, folders) => {
+  //   this.setState({
+  //     notes,
+  //     folders,
+  //     error: null,
+  //   })
+  //   console.log('setting state');
+  //   console.log(this.state);
+  // }
   setFoldersNotes = values => {
     this.setState(
       {...values}
